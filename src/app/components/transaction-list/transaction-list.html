@@ -1,0 +1,67 @@
+<div class="container">
+  <div class="header">
+    <a routerLink="/dashboard" class="back-btn">←</a>
+    <h2>Transactions</h2>
+  </div>
+
+  <div class="card filter-card">
+    <div class="filter-row">
+      <select [(ngModel)]="filters.type" (change)="loadTransactions()">
+        <option value="">All Types</option>
+        <option value="debit">Debit</option>
+        <option value="credit">Credit</option>
+      </select>
+      <select [(ngModel)]="filters.categoryId" (change)="loadTransactions()">
+        <option value="">All Categories</option>
+        <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+      </select>
+    </div>
+    
+    <div class="filter-row">
+      <input type="date" [(ngModel)]="filters.date" (change)="loadTransactions()" placeholder="Date">
+      <select [(ngModel)]="filters.month" (change)="loadTransactions()">
+        <option value="">All Months</option>
+        <option value="01">January</option>
+        <option value="02">February</option>
+        <option value="03">March</option>
+        <option value="04">April</option>
+        <option value="05">May</option>
+        <option value="06">June</option>
+        <option value="07">July</option>
+        <option value="08">August</option>
+        <option value="09">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+      </select>
+      <select [(ngModel)]="filters.year" (change)="loadTransactions()">
+        <option value="">All Years</option>
+        <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+      </select>
+    </div>
+
+    <button class="btn btn-secondary btn-sm" (click)="clearFilters()">Clear Filters</button>
+  </div>
+
+  <div class="card">
+    <div *ngFor="let t of transactions" class="transaction-item">
+      <div class="t-main">
+        <div class="t-info">
+          <div class="t-name">{{ t.description || t.category_name }}</div>
+          <div class="t-details text-muted">
+            {{ t.category_name }} • {{ t.date | date:'mediumDate' }}
+          </div>
+        </div>
+        <div class="t-right">
+          <div class="t-amount" [class.credit]="t.type === 'credit'" [class.debit]="t.type === 'debit'">
+            {{ t.type === 'credit' ? '+' : '-' }} {{ t.amount | currency }}
+          </div>
+          <button class="delete-btn" (click)="deleteTransaction(t.id)">🗑️</button>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="transactions.length === 0" class="text-muted text-center">
+      No transactions found.
+    </div>
+  </div>
+</div>

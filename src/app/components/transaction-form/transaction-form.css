@@ -1,0 +1,72 @@
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.back-btn {
+  text-decoration: none;
+  font-size: 24px;
+  color: var(--text-color);
+  margin-right: 16px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+input[type="number"],
+input[type="text"],
+input[type="date"],
+select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.radio-group {
+  display: flex;
+  gap: 12px;
+}
+
+.radio-group input[type="radio"] {
+  display: none;
+}
+
+.radio-label {
+  flex: 1;
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+input[type="radio"]:checked + .debit-label {
+  background-color: var(--debit-color);
+  color: white;
+  border-color: var(--debit-color);
+}
+
+input[type="radio"]:checked + .credit-label {
+  background-color: var(--credit-color);
+  color: white;
+  border-color: var(--credit-color);
+}
+
+.btn-block {
+  width: 100%;
+  margin-top: 12px;
+}

@@ -1,0 +1,36 @@
+<div class="container">
+  <div class="header">
+    <a routerLink="/dashboard" class="back-btn">←</a>
+    <h2>Settings</h2>
+  </div>
+
+  <div class="card">
+    <h3>Configuration</h3>
+    <div class="form-group">
+      <label for="clientId">Google OAuth Client ID</label>
+      <input type="text" id="clientId" [(ngModel)]="clientId" placeholder="Enter your Client ID">
+      <button class="btn btn-secondary btn-sm mt-8" (click) = "saveClientId()">Save Client ID</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Google Drive Backup</h3>
+    <p class="text-muted">Backup your local database to Google Drive.</p>
+    
+    <div *ngIf="!isLoggedIn">
+      <button class="btn btn-primary" (click)="login()">Connect & Login</button>
+    </div>
+
+    <div *ngIf="isLoggedIn">
+      <p class="status success">Connected to Google Drive</p>
+      <button class="btn btn-primary" (click)="backup()">Backup Now</button>
+      <p class="status">{{ backupStatus }}</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>App Information</h3>
+    <p>Version: 1.0.0</p>
+    <p>Storage: SQLite (Local)</p>
+  </div>
+</div>

@@ -1,0 +1,72 @@
+<div class="container">
+  <!-- Header App Name -->
+  <div class="app-header">
+    <h2>My Finance</h2>
+    <div class="user-avatar">👤</div>
+  </div>
+
+  <div *ngIf="loading" class="loading-state card">
+    <div class="spinner"></div>
+    <p>Loading your finances...</p>
+  </div>
+
+  <div *ngIf="!loading">
+    <div *ngIf="error" class="alert warning">{{ error }}</div>
+
+    <!-- Balance Card -->
+    <div class="card balance-card">
+      <span class="card-label">Total Balance</span>
+      <h1 class="total-balance" [class.credit]="balance.balance >= 0" [class.debit]="balance.balance < 0">
+        {{ balance.balance | currency }}
+      </h1>
+      <div class="balance-split">
+        <div class="split-item">
+          <div class="icon-circle credit-bg">↑</div>
+          <div class="split-info">
+            <span class="label">Income</span>
+            <span class="value credit">{{ balance.credit | currency }}</span>
+          </div>
+        </div>
+        <div class="split-item">
+          <div class="icon-circle debit-bg">↓</div>
+          <div class="split-info">
+            <span class="label">Expenses</span>
+            <span class="value debit">{{ balance.debit | currency }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="card">
+      <div class="card-header">
+        <h3>Recent Activity</h3>
+        <a routerLink="/transactions" class="view-all">View All</a>
+      </div>
+      
+      <div class="transaction-list">
+        <div *ngFor="let t of recentTransactions" class="transaction-row">
+          <div class="t-icon-box">
+            {{ t.category_name?.charAt(0) || '💰' }}
+          </div>
+          <div class="t-details">
+            <span class="t-name">{{ t.description || t.category_name }}</span>
+            <span class="t-category">{{ t.category_name }} • {{ t.date | date:'MMM d' }}</span>
+          </div>
+          <div class="t-amount" [class.credit]="t.type === 'credit'" [class.debit]="t.type === 'debit'">
+            {{ t.type === 'credit' ? '+' : '-' }}{{ t.amount | currency }}
+          </div>
+        </div>
+
+        <div *ngIf="recentTransactions.length === 0" class="empty-state">
+          <div class="empty-icon">📂</div>
+          <p>No transactions yet</p>
+          <button routerLink="/add-transaction" class="btn btn-primary btn-sm">Add First One</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Action Button -->
+  <a routerLink="/add-transaction" class="fab">+</a>
+</div>

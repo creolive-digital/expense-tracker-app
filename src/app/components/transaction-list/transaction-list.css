@@ -1,0 +1,66 @@
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.back-btn {
+  text-decoration: none;
+  font-size: 24px;
+  color: var(--text-color);
+  margin-right: 16px;
+}
+
+.filter-card {
+  padding: 12px;
+}
+
+.filter-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.filter-row select, .filter-row input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+  width: 100%;
+}
+
+.t-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.t-details {
+  font-size: 12px;
+}
+
+.t-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px;
+}
+
+.text-center {
+  text-align: center;
+  padding: 20px 0;
+}
