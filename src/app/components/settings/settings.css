@@ -15,10 +15,23 @@
   margin-bottom: 16px;
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
+.status-box {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 12px;
+  border-radius: 12px;
+  font-family: monospace;
+  font-size: 0.9rem;
+  border: 1px solid var(--glass-border);
+}
+
+.status-box.success {
+  color: var(--success);
+  border-color: var(--success);
+}
+
+.status-box.error {
+  color: var(--danger);
+  border-color: var(--danger);
 }
 
 .form-group input {

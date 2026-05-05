@@ -12,10 +12,12 @@ export class DatabaseService {
   private db!: SQLiteDBConnection;
   private dbName: string = 'expense_tracker_db';
   public isReady = new BehaviorSubject<boolean>(false);
+  public dbStatus = new BehaviorSubject<string>('idle');
 
   constructor() {}
 
   async initializePlugin() {
+    this.dbStatus.next('initializing');
     console.log('DatabaseService: Initializing...');
     if (this.isReady.value) return;
 
@@ -27,11 +29,13 @@ export class DatabaseService {
         console.log('DatabaseService: Web store initialized');
       } catch (err) {
         console.error('DatabaseService: Web store init failed', err);
+        this.dbStatus.next('web-init-failed');
       }
     }
 
     try {
       console.log('DatabaseService: Creating connection...');
+      this.dbStatus.next('creating-connection');
       // Ensure we don't have multiple connections
       const isConn = (await this.sqlite.isConnection(this.dbName, false)).result;
       if (isConn) {
@@ -40,17 +44,19 @@ export class DatabaseService {
         this.db = await this.sqlite.createConnection(this.dbName, false, 'no-encryption', 1, false);
       }
       
+      this.dbStatus.next('opening-db');
       await this.db.open();
       console.log('DatabaseService: Connection opened');
 
       await this.createTables();
       await this.seedCategories();
       console.log('DatabaseService: Initialization complete');
+      this.dbStatus.next('ready');
       this.isReady.next(true);
     } catch (err) {
       console.error('Database initialization failed', err);
-      // Signal failure but allow UI to proceed
-      this.isReady.next(true); 
+      this.dbStatus.next('error: ' + (err as any).message);
+      this.isReady.next(true); // Still signal ready so UI doesn't hang
     }
   }
 

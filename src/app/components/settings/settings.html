@@ -1,7 +1,15 @@
 <div class="container">
-  <div class="header">
-    <a routerLink="/dashboard" class="back-btn">←</a>
+  <div class="header-action">
+    <a routerLink="/dashboard" class="back-link">←</a>
     <h2>Settings</h2>
+  </div>
+
+  <div class="card">
+    <h3>Connection Status</h3>
+    <p class="status-box" [class.success]="dbStatus === 'ready'" [class.error]="dbStatus.startsWith('error')">
+      {{ dbStatus }}
+    </p>
+    <button *ngIf="dbStatus.startsWith('error')" class="btn btn-secondary btn-sm" (click)="retryDb()">Retry Connection</button>
   </div>
 
   <div class="card">
@@ -30,7 +38,7 @@
 
   <div class="card">
     <h3>App Information</h3>
-    <p>Version: 1.0.0</p>
+    <p>Version: 1.0.1</p>
     <p>Storage: SQLite (Local)</p>
   </div>
 </div>
