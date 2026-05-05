@@ -16,6 +16,6 @@ export class App implements OnInit {
   constructor(private databaseService: DatabaseService) {}
 
   async ngOnInit() {
-    await this.databaseService.initializePlugin();
+    this.databaseService.initializePlugin();
   }
 }

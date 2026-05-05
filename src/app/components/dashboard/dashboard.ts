@@ -21,26 +21,24 @@ export class DashboardComponent implements OnInit {
   constructor(private databaseService: DatabaseService) {}
 
   async ngOnInit() {
+    // Show loading for at least 800ms for a smooth transition
+    const minWait = new Promise(resolve => setTimeout(resolve, 800));
+
     try {
-      // Wait for database with a 5s timeout for web fallback
-      await firstValueFrom(
-        this.databaseService.isReady.pipe(
-          filter(ready => ready),
-          timeout(5000),
-          catchError(() => {
-            console.warn('Database initialization timed out. Using mock data for preview.');
-            this.error = 'Database connection slow. Showing local preview.';
-            return of(true);
-          })
-        )
-      );
+      // Wait for database with a 4s timeout
+      await Promise.race([
+        firstValueFrom(this.databaseService.isReady.pipe(filter(ready => ready))),
+        new Promise((_, reject) => setTimeout(() => reject('timeout'), 4000))
+      ]);
       
       this.balance = await this.databaseService.getBalance();
       this.recentTransactions = await this.databaseService.getTransactions();
       this.recentTransactions = this.recentTransactions.slice(0, 5);
     } catch (err) {
-      this.error = 'Failed to load data.';
+      console.warn('Dashboard: Using fallback loading due to:', err);
+      this.error = err === 'timeout' ? 'Connecting to local storage...' : 'Database error.';
     } finally {
+      await minWait;
       this.loading = false;
     }
   }

@@ -32,19 +32,25 @@ export class DatabaseService {
 
     try {
       console.log('DatabaseService: Creating connection...');
-      this.db = await this.sqlite.createConnection(this.dbName, false, 'no-encryption', 1, false);
+      // Ensure we don't have multiple connections
+      const isConn = (await this.sqlite.isConnection(this.dbName, false)).result;
+      if (isConn) {
+        this.db = await this.sqlite.retrieveConnection(this.dbName, false);
+      } else {
+        this.db = await this.sqlite.createConnection(this.dbName, false, 'no-encryption', 1, false);
+      }
+      
       await this.db.open();
       console.log('DatabaseService: Connection opened');
 
       await this.createTables();
       await this.seedCategories();
-      this.isReady.next(true);
       console.log('DatabaseService: Initialization complete');
+      this.isReady.next(true);
     } catch (err) {
       console.error('Database initialization failed', err);
-      // Even if it fails, we should signal "ready" so the UI can show with empty state
-      // or we can handle the error in components
-      this.isReady.next(false); 
+      // Signal failure but allow UI to proceed
+      this.isReady.next(true); 
     }
   }
 
