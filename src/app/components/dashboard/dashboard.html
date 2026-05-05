@@ -47,7 +47,7 @@
       <div class="transaction-list">
         <div *ngFor="let t of recentTransactions" class="transaction-row">
           <div class="t-icon-box">
-            {{ t.category_name?.charAt(0) || '💰' }}
+            {{ t.category_name.charAt(0) || '💰' }}
           </div>
           <div class="t-details">
             <span class="t-name">{{ t.description || t.category_name }}</span>

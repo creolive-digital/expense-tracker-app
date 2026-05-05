@@ -1,0 +1,82 @@
+.month-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--glass-bg);
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--glass-border);
+}
+
+.month-selector button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.form-grid button {
+  grid-column: span 2;
+}
+
+.budget-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.b-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.b-name {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.b-spent {
+  font-size: 0.85rem;
+}
+
+.b-del {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.budget-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.remaining.danger {
+  color: var(--danger);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.btn-sm {
+  padding: 10px;
+}

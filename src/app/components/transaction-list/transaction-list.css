@@ -1,49 +1,94 @@
-.header {
+.header-action {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
 }
 
-.back-btn {
+.back-link {
   text-decoration: none;
   font-size: 24px;
-  color: var(--text-color);
-  margin-right: 16px;
+  color: white;
 }
 
-.filter-card {
-  padding: 12px;
+.export-btn {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-.filter-row {
-  display: flex;
+.glass-filter {
+  padding: 16px;
+}
+
+.search-box {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.search-icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.5;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 8px;
-  margin-bottom: 8px;
 }
 
-.filter-row select, .filter-row input {
-  flex: 1;
+.btn-clear {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.2);
   padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 12px;
+  font-weight: 600;
 }
 
-.btn-sm {
-  padding: 6px 12px;
-  font-size: 12px;
-  width: 100%;
+.transaction-card {
+  padding: 16px;
+  margin-bottom: 12px;
 }
 
-.t-main {
+.t-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  width: 100%;
 }
 
-.t-details {
-  font-size: 12px;
+.t-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-right: 12px;
+}
+
+.t-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.t-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.t-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
 .t-right {
@@ -52,15 +97,24 @@
   gap: 12px;
 }
 
-.delete-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 18px;
-  padding: 4px;
+.t-amt {
+  font-weight: 700;
 }
 
-.text-center {
+.t-del {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.empty-state {
   text-align: center;
-  padding: 20px 0;
+  padding: 40px 0;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
 }

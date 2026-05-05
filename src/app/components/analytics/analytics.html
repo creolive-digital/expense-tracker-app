@@ -1,0 +1,42 @@
+<div class="container">
+  <div class="app-header">
+    <h2>Analytics</h2>
+    <div class="month-selector">
+      <button (click)="changeMonth(-1)">‹</button>
+      <span>{{ getMonthName() }} {{ year }}</span>
+      <button (click)="changeMonth(1)">›</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="text-center card">
+    <div class="spinner"></div>
+    <p>Loading analytics...</p>
+  </div>
+
+  <div *ngIf="!loading">
+    <div class="card chart-card">
+      <h3>Spending by Category</h3>
+      <div class="chart-container">
+        <canvas baseChart
+          [data]="pieChartData"
+          [options]="pieChartOptions"
+          [type]="pieChartType">
+        </canvas>
+      </div>
+    </div>
+
+    <div class="card summary-card">
+      <h3>Quick Stats</h3>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="label">Total Spent</span>
+          <span class="value">{{ totalSpent | currency }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="label">Categories</span>
+          <span class="value">{{ pieChartData.labels?.length || 0 }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

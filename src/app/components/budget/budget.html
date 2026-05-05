@@ -1,0 +1,60 @@
+<div class="container">
+  <div class="app-header">
+    <h2>Monthly Budgets</h2>
+    <div class="month-selector">
+      <button (click)="changeMonth(-1)">‹</button>
+      <span>{{ getMonthName() }} {{ year }}</span>
+      <button (click)="changeMonth(1)">›</button>
+    </div>
+  </div>
+
+  <!-- Add Budget Card -->
+  <div class="card glass-form">
+    <h3>Set New Budget</h3>
+    <div class="form-grid">
+      <select [(ngModel)]="newBudget.category_id">
+        <option value="" disabled>Select Category</option>
+        <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+      </select>
+      <input type="number" [(ngModel)]="newBudget.amount" placeholder="Amount">
+      <button class="btn btn-primary btn-sm" (click)="addBudget()">Add Budget</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="text-center">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="!loading">
+    <div *ngFor="let b of budgets" class="card budget-card">
+      <div class="budget-info">
+        <div class="b-details">
+          <span class="b-name">{{ b.category_name }}</span>
+          <span class="b-spent text-muted">
+            {{ (b.actual_spending || 0) | currency }} of {{ b.amount | currency }}
+          </span>
+        </div>
+        <button class="b-del" (click)="deleteBudget(b.id)">✕</button>
+      </div>
+
+      <div class="progress-container">
+        <div class="progress-bar" 
+          [style.width.%]="getPercent(b)"
+          [style.background]="getStatusColor(b)">
+        </div>
+      </div>
+
+      <div class="budget-footer">
+        <span class="percent">{{ getPercent(b) | number:'1.0-0' }}% used</span>
+        <span class="remaining" [class.danger]="(b.amount - (b.actual_spending || 0)) < 0">
+          {{ (b.amount - (b.actual_spending || 0)) | currency }} left
+        </span>
+      </div>
+    </div>
+
+    <div *ngIf="budgets.length === 0" class="empty-state">
+      <div class="empty-icon">🎯</div>
+      <p>No budgets set for this month</p>
+    </div>
+  </div>
+</div>

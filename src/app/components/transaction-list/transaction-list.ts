@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { DatabaseService } from '../../services/database';
 import { TransactionWithCategory, Category } from '../../models/transaction.model';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-transaction-list',
@@ -21,7 +23,8 @@ export class TransactionListComponent implements OnInit {
     categoryId: '',
     date: '',
     month: '',
-    year: ''
+    year: '',
+    searchTerm: ''
   };
 
   years: number[] = [];
@@ -60,7 +63,8 @@ export class TransactionListComponent implements OnInit {
       type: this.filters.type || undefined,
       categoryId: this.filters.categoryId ? parseInt(this.filters.categoryId) : undefined,
       startDate,
-      endDate
+      endDate,
+      searchTerm: this.filters.searchTerm
     });
   }
 
@@ -77,8 +81,57 @@ export class TransactionListComponent implements OnInit {
       categoryId: '',
       date: '',
       month: '',
-      year: ''
+      year: '',
+      searchTerm: ''
     };
     await this.loadTransactions();
+  }
+
+  async exportToCSV() {
+    if (this.transactions.length === 0) {
+      alert('No transactions to export.');
+      return;
+    }
+
+    const headers = ['Date', 'Description', 'Category', 'Type', 'Amount'];
+    const rows = this.transactions.map(t => [
+      t.date,
+      t.description || '',
+      t.category_name,
+      t.type,
+      t.amount.toString()
+    ]);
+
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(r => r.join(','))
+    ].join('\n');
+
+    const fileName = `transactions_${new Date().toISOString().substring(0, 10)}.csv`;
+
+    if (Capacitor.getPlatform() === 'web') {
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', fileName);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      try {
+        await Filesystem.writeFile({
+          path: fileName,
+          data: csvContent,
+          directory: Directory.Documents,
+          encoding: Encoding.UTF8,
+        });
+        alert(`Exported to Documents folder: ${fileName}`);
+      } catch (e) {
+        console.error('Unable to write file', e);
+        alert('Export failed.');
+      }
+    }
   }
 }

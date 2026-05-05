@@ -1,11 +1,17 @@
 <div class="container">
-  <div class="header">
-    <a routerLink="/dashboard" class="back-btn">←</a>
+  <div class="header-action">
+    <a routerLink="/dashboard" class="back-link">←</a>
     <h2>Transactions</h2>
+    <button class="export-btn" (click)="exportToCSV()">📊 Export</button>
   </div>
 
-  <div class="card filter-card">
-    <div class="filter-row">
+  <div class="card glass-filter">
+    <div class="search-box">
+      <input type="text" [(ngModel)]="filters.searchTerm" (input)="loadTransactions()" placeholder="Search description or category...">
+      <span class="search-icon">🔍</span>
+    </div>
+
+    <div class="filter-grid">
       <select [(ngModel)]="filters.type" (change)="loadTransactions()">
         <option value="">All Types</option>
         <option value="debit">Debit</option>
@@ -15,53 +21,50 @@
         <option value="">All Categories</option>
         <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
       </select>
-    </div>
-    
-    <div class="filter-row">
-      <input type="date" [(ngModel)]="filters.date" (change)="loadTransactions()" placeholder="Date">
+      <input type="date" [(ngModel)]="filters.date" (change)="loadTransactions()">
       <select [(ngModel)]="filters.month" (change)="loadTransactions()">
         <option value="">All Months</option>
-        <option value="01">January</option>
-        <option value="02">February</option>
-        <option value="03">March</option>
-        <option value="04">April</option>
+        <option value="01">Jan</option>
+        <option value="02">Feb</option>
+        <option value="03">Mar</option>
+        <option value="04">Apr</option>
         <option value="05">May</option>
-        <option value="06">June</option>
-        <option value="07">July</option>
-        <option value="08">August</option>
-        <option value="09">September</option>
-        <option value="10">October</option>
-        <option value="11">November</option>
-        <option value="12">December</option>
+        <option value="06">Jun</option>
+        <option value="07">Jul</option>
+        <option value="08">Aug</option>
+        <option value="09">Sep</option>
+        <option value="10">Oct</option>
+        <option value="11">Nov</option>
+        <option value="12">Dec</option>
       </select>
       <select [(ngModel)]="filters.year" (change)="loadTransactions()">
         <option value="">All Years</option>
         <option *ngFor="let y of years" [value]="y">{{ y }}</option>
       </select>
+      <button class="btn-clear" (click)="clearFilters()">Reset</button>
     </div>
-
-    <button class="btn btn-secondary btn-sm" (click)="clearFilters()">Clear Filters</button>
   </div>
 
-  <div class="card">
-    <div *ngFor="let t of transactions" class="transaction-item">
-      <div class="t-main">
+  <div class="transaction-timeline">
+    <div *ngFor="let t of transactions" class="card transaction-card">
+      <div class="t-row">
+        <div class="t-icon">{{ t.category_name.charAt(0) || '💰' }}</div>
         <div class="t-info">
-          <div class="t-name">{{ t.description || t.category_name }}</div>
-          <div class="t-details text-muted">
-            {{ t.category_name }} • {{ t.date | date:'mediumDate' }}
-          </div>
+          <span class="t-title">{{ t.description || t.category_name }}</span>
+          <span class="t-sub">{{ t.category_name }} • {{ t.date | date:'mediumDate' }}</span>
         </div>
         <div class="t-right">
-          <div class="t-amount" [class.credit]="t.type === 'credit'" [class.debit]="t.type === 'debit'">
-            {{ t.type === 'credit' ? '+' : '-' }} {{ t.amount | currency }}
+          <div class="t-amt" [class.credit]="t.type === 'credit'" [class.debit]="t.type === 'debit'">
+            {{ t.type === 'credit' ? '+' : '-' }}{{ t.amount | currency }}
           </div>
-          <button class="delete-btn" (click)="deleteTransaction(t.id)">🗑️</button>
+          <button class="t-del" (click)="deleteTransaction(t.id)">✕</button>
         </div>
       </div>
     </div>
-    <div *ngIf="transactions.length === 0" class="text-muted text-center">
-      No transactions found.
+
+    <div *ngIf="transactions.length === 0" class="empty-state">
+      <div class="empty-icon">📂</div>
+      <p>No transactions found</p>
     </div>
   </div>
 </div>

@@ -1,72 +1,81 @@
-.header {
+.header-action {
   display: flex;
   align-items: center;
   margin-bottom: 24px;
 }
 
-.back-btn {
+.back-link {
   text-decoration: none;
   font-size: 24px;
-  color: var(--text-color);
+  color: white;
   margin-right: 16px;
 }
 
+.glass-form {
+  padding: 30px;
+}
+
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
+  margin-bottom: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
   color: var(--text-muted);
 }
 
-input[type="number"],
-input[type="text"],
-input[type="date"],
-select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: var(--border-radius);
-  font-size: 16px;
-  box-sizing: border-box;
-}
-
-.radio-group {
+.toggle-group {
   display: flex;
-  gap: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 4px;
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
 }
 
-.radio-group input[type="radio"] {
+.toggle-group input[type="radio"] {
   display: none;
 }
 
-.radio-label {
+.toggle-btn {
   flex: 1;
-  padding: 12px;
+  padding: 10px;
   text-align: center;
-  border: 1px solid #ddd;
-  border-radius: var(--border-radius);
+  border-radius: 10px;
   cursor: pointer;
-  font-weight: bold;
-  transition: all 0.2s;
+  font-weight: 700;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+  color: var(--text-muted);
 }
 
-input[type="radio"]:checked + .debit-label {
-  background-color: var(--debit-color);
+input[type="radio"]:checked + .debit-btn {
+  background: var(--danger);
   color: white;
-  border-color: var(--debit-color);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
-input[type="radio"]:checked + .credit-label {
-  background-color: var(--credit-color);
+input[type="radio"]:checked + .credit-btn {
+  background: var(--success);
   color: white;
-  border-color: var(--credit-color);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
-.btn-block {
-  width: 100%;
-  margin-top: 12px;
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.currency-symbol {
+  position: absolute;
+  left: 16px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.input-wrapper input {
+  padding-left: 36px;
 }

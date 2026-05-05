@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { CapacitorSQLite, SQLiteConnection, SQLiteDBConnection } from '@capacitor-community/sqlite';
-import { Transaction, Category, TransactionWithCategory } from '../models/transaction.model';
+import { Transaction, Category, TransactionWithCategory, Budget, BudgetWithCategory } from '../models/transaction.model';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -65,6 +65,14 @@ export class DatabaseService {
         date TEXT NOT NULL,
         FOREIGN KEY (category_id) REFERENCES categories (id)
       );
+      CREATE TABLE IF NOT EXISTS budgets (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        category_id INTEGER NOT NULL,
+        amount REAL NOT NULL,
+        month INTEGER NOT NULL,
+        year INTEGER NOT NULL,
+        FOREIGN KEY (category_id) REFERENCES categories (id)
+      );
     `;
     await this.db.execute(schema);
   }
@@ -107,6 +115,7 @@ export class DatabaseService {
     categoryId?: number;
     startDate?: string;
     endDate?: string;
+    searchTerm?: string;
   } = {}): Promise<TransactionWithCategory[]> {
     if (!this.db) return [];
     
@@ -133,6 +142,10 @@ export class DatabaseService {
     if (filters.endDate) {
       sql += ' AND t.date <= ?';
       params.push(filters.endDate);
+    }
+    if (filters.searchTerm) {
+      sql += ' AND (t.description LIKE ? OR c.name LIKE ?)';
+      params.push(`%${filters.searchTerm}%`, `%${filters.searchTerm}%`);
     }
 
     sql += ' ORDER BY t.date DESC';
@@ -162,5 +175,49 @@ export class DatabaseService {
   async deleteTransaction(id: number) {
     if (!this.db) return;
     await this.db.run('DELETE FROM transactions WHERE id = ?', [id]);
+  }
+
+  // Budgets
+  async addBudget(budget: Budget) {
+    if (!this.db) return;
+    const sql = 'INSERT INTO budgets (category_id, amount, month, year) VALUES (?, ?, ?, ?)';
+    const params = [budget.category_id, budget.amount, budget.month, budget.year];
+    await this.db.run(sql, params);
+  }
+
+  async getBudgets(month: number, year: number): Promise<BudgetWithCategory[]> {
+    if (!this.db) return [];
+    
+    const sql = `
+      SELECT b.*, c.name as category_name,
+      (SELECT SUM(amount) FROM transactions WHERE category_id = b.category_id AND strftime('%m', date) = ? AND strftime('%Y', date) = ?) as actual_spending
+      FROM budgets b
+      JOIN categories c ON b.category_id = c.id
+      WHERE b.month = ? AND b.year = ?
+    `;
+    const mStr = month.toString().padStart(2, '0');
+    const yStr = year.toString();
+    const result = await this.db.query(sql, [mStr, yStr, month, year]);
+    return result.values as BudgetWithCategory[];
+  }
+
+  async deleteBudget(id: number) {
+    if (!this.db) return;
+    await this.db.run('DELETE FROM budgets WHERE id = ?', [id]);
+  }
+
+  async getCategorySpending(month: number, year: number): Promise<{category_name: string, total: number}[]> {
+    if (!this.db) return [];
+    const sql = `
+      SELECT c.name as category_name, SUM(t.amount) as total
+      FROM transactions t
+      JOIN categories c ON t.category_id = c.id
+      WHERE t.type = 'debit' AND strftime('%m', t.date) = ? AND strftime('%Y', t.date) = ?
+      GROUP BY c.name
+    `;
+    const mStr = month.toString().padStart(2, '0');
+    const yStr = year.toString();
+    const result = await this.db.query(sql, [mStr, yStr]);
+    return result.values as {category_name: string, total: number}[];
   }
 }
