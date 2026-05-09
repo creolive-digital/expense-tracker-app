@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { Capacitor } from '@capacitor/core';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +28,18 @@ export class BackupService {
       alert('Please set your Google Client ID in Settings first.');
       return;
     }
-    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${this.redirectUri}&response_type=token&scope=${this.scope}`;
+
+    // On Android, we should ideally use a custom scheme, but for now we ensure 
+    // the redirectUri is correctly handled.
+    let redirectUri = this.redirectUri;
+    if (Capacitor.getPlatform() !== 'web') {
+      // For Capacitor/Android, redirecting to localhost:4200 (or similar) might work 
+      // if the OAuth client is configured for Web, but it's better to use 
+      // a platform-specific flow. For simplicity in this demo, we use the current origin.
+      redirectUri = window.location.origin + '/settings';
+    }
+
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=${encodeURIComponent(this.scope)}`;
     window.location.href = authUrl;
   }
 

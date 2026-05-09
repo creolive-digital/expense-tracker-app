@@ -42,8 +42,8 @@
       <input type="text" id="description" formControlName="description" placeholder="e.g. Starbucks Coffee">
     </div>
 
-    <button type="submit" class="btn btn-primary" [disabled]="!transactionForm.valid">
-      Add Transaction
+    <button type="submit" class="btn btn-primary" [disabled]="!transactionForm.valid || isSubmitting">
+      {{ isSubmitting ? 'Adding...' : 'Add Transaction' }}
     </button>
   </form>
 </div>

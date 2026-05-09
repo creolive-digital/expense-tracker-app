@@ -1,4 +1,4 @@
-package com.example.expensetracker;
+package com.creolivedigital.expensetracker;
 
 import com.getcapacitor.BridgeActivity;
 

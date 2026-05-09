@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DatabaseService } from '../../services/database';
 import { TransactionWithCategory } from '../../models/transaction.model';
-import { filter, skip, take } from 'rxjs';
+import { filter, firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -21,18 +21,8 @@ export class DashboardComponent implements OnInit {
   constructor(private databaseService: DatabaseService) {}
 
   async ngOnInit() {
-    // If DB is already ready, load data
-    if (this.databaseService.isReady.value) {
-      await this.loadDashboardData();
-    } else {
-      // Otherwise, wait for it in the background
-      this.databaseService.isReady.pipe(
-        filter(ready => ready),
-        take(1)
-      ).subscribe(() => {
-        this.loadDashboardData();
-      });
-    }
+    await firstValueFrom(this.databaseService.isReady.pipe(filter(ready => ready)));
+    await this.loadDashboardData();
   }
 
   async loadDashboardData() {

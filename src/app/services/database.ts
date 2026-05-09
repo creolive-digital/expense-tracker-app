@@ -56,7 +56,7 @@ export class DatabaseService {
     } catch (err) {
       console.error('Database initialization failed', err);
       this.dbStatus.next('error: ' + (err as any).message);
-      this.isReady.next(true); // Still signal ready so UI doesn't hang
+      this.isReady.next(false); // Fix: Don't signal ready on failure
     }
   }
 

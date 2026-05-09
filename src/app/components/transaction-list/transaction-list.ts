@@ -6,6 +6,7 @@ import { DatabaseService } from '../../services/database';
 import { TransactionWithCategory, Category } from '../../models/transaction.model';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Capacitor } from '@capacitor/core';
+import { filter, firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-transaction-list',
@@ -37,6 +38,7 @@ export class TransactionListComponent implements OnInit {
   }
 
   async ngOnInit() {
+    await firstValueFrom(this.databaseService.isReady.pipe(filter(ready => ready)));
     this.categories = await this.databaseService.getCategories();
     await this.loadTransactions();
   }
@@ -45,18 +47,22 @@ export class TransactionListComponent implements OnInit {
     let startDate: string | undefined;
     let endDate: string | undefined;
 
+    const toLocalISO = (date: Date) => {
+      return new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().substring(0, 10);
+    };
+
     if (this.filters.date) {
       startDate = this.filters.date;
       endDate = this.filters.date;
     } else if (this.filters.month && this.filters.year) {
       const month = parseInt(this.filters.month);
       const year = parseInt(this.filters.year);
-      startDate = new Date(year, month - 1, 1).toISOString().substring(0, 10);
-      endDate = new Date(year, month, 0).toISOString().substring(0, 10);
+      startDate = toLocalISO(new Date(year, month - 1, 1));
+      endDate = toLocalISO(new Date(year, month, 0));
     } else if (this.filters.year) {
       const year = parseInt(this.filters.year);
-      startDate = new Date(year, 0, 1).toISOString().substring(0, 10);
-      endDate = new Date(year, 11, 31).toISOString().substring(0, 10);
+      startDate = toLocalISO(new Date(year, 0, 1));
+      endDate = toLocalISO(new Date(year, 11, 31));
     }
 
     this.transactions = await this.databaseService.getTransactions({
@@ -93,11 +99,25 @@ export class TransactionListComponent implements OnInit {
       return;
     }
 
+    // Check permissions on Android/iOS
+    if (Capacitor.getPlatform() !== 'web') {
+      const status = await Filesystem.checkPermissions();
+      if (status.publicStorage !== 'granted') {
+        const requestStatus = await Filesystem.requestPermissions();
+        if (requestStatus.publicStorage !== 'granted') {
+          alert('Storage permission is required to export files.');
+          return;
+        }
+      }
+    }
+
     const headers = ['Date', 'Description', 'Category', 'Type', 'Amount'];
+    const escapeCsv = (val: string) => `"${val.replace(/"/g, '""')}"`;
+    
     const rows = this.transactions.map(t => [
       t.date,
-      t.description || '',
-      t.category_name,
+      escapeCsv(t.description || ''),
+      escapeCsv(t.category_name),
       t.type,
       t.amount.toString()
     ]);
