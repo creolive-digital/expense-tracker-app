@@ -50,6 +50,7 @@ export class DatabaseService {
 
       await this.createTables();
       await this.seedCategories();
+      await this.seedTransactions();
       console.log('DatabaseService: Initialization complete');
       this.dbStatus.next('ready');
       this.isReady.next(true);
@@ -103,6 +104,24 @@ export class DatabaseService {
 
       for (const cat of defaultCategories) {
         await this.db.run('INSERT INTO categories (name, type, icon) VALUES (?, ?, ?)', [cat.name, cat.type, cat.icon]);
+      }
+    }
+  }
+
+  private async seedTransactions() {
+    const result = await this.db.query('SELECT COUNT(*) as count FROM transactions');
+    if (result.values && result.values[0].count === 0) {
+      const today = new Date();
+      const transactions: Transaction[] = [
+        { type: 'credit', amount: 5000, category_id: 3, description: 'Monthly Salary', date: today.toISOString() },
+        { type: 'debit', amount: 50, category_id: 1, description: 'Lunch at Cafe', date: new Date(today.getTime() - 86400000).toISOString() },
+        { type: 'debit', amount: 120, category_id: 4, description: 'New Shoes', date: new Date(today.getTime() - 172800000).toISOString() },
+        { type: 'debit', amount: 30, category_id: 2, description: 'Bus Fare', date: today.toISOString() },
+        { type: 'debit', amount: 450, category_id: 6, description: 'Gym Membership', date: new Date(today.getTime() - 259200000).toISOString() }
+      ];
+
+      for (const t of transactions) {
+        await this.addTransaction(t);
       }
     }
   }
